@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createFactory } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ReactComponent as ArrowLeft } from "../assets/arrow-left.svg";
 
@@ -12,6 +12,7 @@ const NotePage = () => {
   }, [id]);
 
   let getNote = async (noteId) => {
+    if (id === "new") return;
     let response = await fetch(`/api/notes/${noteId}/`);
     let data = await response.json();
     setNote(data);
@@ -20,6 +21,16 @@ const NotePage = () => {
   let updateNote = async (noteId) => {
     await fetch(`/api/notes/${noteId}/update/`, {
       method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(note),
+    });
+  };
+
+  let createNote = async () => {
+    await fetch(`/api/notes/create/`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -37,7 +48,13 @@ const NotePage = () => {
   };
 
   let handleSubmit = async () => {
-    await updateNote(id);
+    if (id !== "new" && !note.body) {
+      await deleteNote(id);
+    } else if (id !== "new") {
+      await updateNote(id);
+    } else if (id === "new" && note !== null) {
+      await createNote();
+    }
     navigate("/");
   };
 
@@ -52,7 +69,11 @@ const NotePage = () => {
         <h3>
           <ArrowLeft onClick={handleSubmit} />
         </h3>
-        <button onClick={handleDelete}>Delete</button>
+        {id !== "new" ? (
+          <button onClick={handleDelete}>Delete</button>
+        ) : (
+          <button onClick={handleSubmit}>Done</button>
+        )}
       </div>
       <textarea
         onChange={(e) => {
