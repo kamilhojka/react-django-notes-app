@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createFactory } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ReactComponent as ArrowLeft } from "../assets/arrow-left.svg";
 
@@ -12,7 +12,7 @@ const NotePage = () => {
   }, [id]);
 
   let getNote = async (noteId) => {
-    if (id === "new") return;
+    if (noteId === "new") return;
     let response = await fetch(`/api/notes/${noteId}/`);
     let data = await response.json();
     setNote(data);
