@@ -27,8 +27,22 @@ const NotePage = () => {
     });
   };
 
+  let deleteNote = async (noteId) => {
+    await fetch(`/api/notes/${noteId}/delete/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  };
+
   let handleSubmit = async () => {
     await updateNote(id);
+    navigate("/");
+  };
+
+  let handleDelete = async () => {
+    await deleteNote(id);
     navigate("/");
   };
 
@@ -38,6 +52,7 @@ const NotePage = () => {
         <h3>
           <ArrowLeft onClick={handleSubmit} />
         </h3>
+        <button onClick={handleDelete}>Delete</button>
       </div>
       <textarea
         onChange={(e) => {
